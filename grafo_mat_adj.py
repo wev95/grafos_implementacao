@@ -125,7 +125,7 @@ class GrafoMatrizAdj(Grafo):
 
     # Slide 13
     def ehArvoreSlide13(self) -> bool:
-        return self.ehConexo and not self.temCiclo()
+        return self.ehConexo() and not self.temCiclo()
 
     # Slide 17
     # def obterFlorestaGeradora(self) -> GrafoMatrizAdj:
