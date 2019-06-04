@@ -127,11 +127,48 @@ class GrafoMatrizAdj(Grafo):
     def obterFlorestaGeradora(self):
         T = GrafoMatrizAdj()
         T.n = self.n
-        T.M = []
         T.M = self.createMatrizAdj()
         self.buscaCompleta()
+        print(self.M)
         for i in self.V:
             for j in self.V:
-                if(self.explorado[i][j]):
-                    self.M[i][j] = 1
+                if(self.M[i][j] == 1 and self.descoberto[i][j]):
+                    T.M[i][j] = 1
         return T
+
+    # Slide 26
+    def buscaProfundidade(self, v: int):
+        pilha = Pilha()
+        self.visitado[v] = True
+        pilha.push(v)
+        pilha.push(self.primeiroViz(v))
+        while(pilha.lenght() > 0):
+            v = pilha.pop()
+            w = v
+            while(w > 0):
+                pilha.push(v)
+                pilha.push(self.proximoViz(v, w))
+                if(self.visitado[w]):
+                    if (self.M[v][w] == 1 and not self.explorado[v][w]):
+                        self.explorado[v][w]=True
+                else:
+                    self.explorado[v][w] = True
+                    self.descoberto[v][w] = True
+                    self.visitado[w] = True
+                    pilha.push(w)
+                    pilha.push(self.primeiroViz(w))
+        return None
+
+    def primeiroViz(self, v1: int) -> int:
+        for v2 in self.V:
+            if(self.M[v1][v2] == 1):
+                return v2
+        return 0
+
+    def proximoViz(self, v1: int, index: int) -> int:
+        for v2 in range(index, len(self.M)):
+            if(self.M[v1][v2] == 1):
+                return v2
+        return 0
+
+        # 27, 57, 62
