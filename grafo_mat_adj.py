@@ -1,6 +1,7 @@
 from grafo import Grafo
 from estrutura_de_dados.pilha import Pilha
-
+from estrutura_de_dados.fila import Fila
+import time
 class GrafoMatrizAdj(Grafo):
 
     def definirN(self, n: int):
@@ -22,12 +23,11 @@ class GrafoMatrizAdj(Grafo):
                     aux[u][v] = self.M[u][v]
             self.M = aux
 
-    def removeVertice(self, v1 : int) -> bool:
+    def removeVertice(self, v1 : int):
         self.V.remove(v1)
         self.n -= 1
         for v2 in self.getListVerticesAdj(v1):
             self.removeAresta(v1, v2)
-        return False
 
     def addAresta(self, v1: int, v2: int):
         self.M[v1][v2] = 1
@@ -69,8 +69,14 @@ class GrafoMatrizAdj(Grafo):
     
     # Slide 5
     def busca(self):
+        
+        start= time.time()
         self.rotular()     
         self.buscaSlide5(1)
+        print(start)
+        end=time.time()
+        print(end)
+        # total=total + (end-start)
 
     def buscaSlide5(self, r: int):
         self.visitado[r] = True
@@ -138,18 +144,19 @@ class GrafoMatrizAdj(Grafo):
 
     # Slide 26
     def buscaProfundidade(self, v: int):
+        self.rotular()
         pilha = Pilha()
         self.visitado[v] = True
         pilha.push(v)
         pilha.push(self.primeiroViz(v))
         while(pilha.lenght() > 0):
             v = pilha.pop()
-            w = v
-            while(w > 0):
+            w = pilha.pop()
+            if(w > 0):
                 pilha.push(v)
                 pilha.push(self.proximoViz(v, w))
                 if(self.visitado[w]):
-                    if (self.M[v][w] == 1 and not self.explorado[v][w]):
+                    if (self.M[w][v] == 1 and not self.explorado[v][w]):
                         self.explorado[v][w]=True
                 else:
                     self.explorado[v][w] = True
@@ -157,7 +164,6 @@ class GrafoMatrizAdj(Grafo):
                     self.visitado[w] = True
                     pilha.push(w)
                     pilha.push(self.primeiroViz(w))
-        return None
 
     def primeiroViz(self, v1: int) -> int:
         for v2 in self.V:
@@ -167,8 +173,55 @@ class GrafoMatrizAdj(Grafo):
 
     def proximoViz(self, v1: int, index: int) -> int:
         for v2 in range(index, len(self.M)):
-            if(self.M[v1][v2] == 1):
+            if(v1 != 0 and self.M[v1][v2] == 1 and self.V[index] != index):
                 return v2
         return 0
 
-        # 27, 57, 62
+    # Slide 27
+    def BuscaProfundidadeSlide27(self, v: int):
+        self.rotular()
+        for i in self.V:
+            if(self.visitado[i]):
+                if(not self.explorado[v][i]):
+                    self.explorado[v][i] = True
+            else:
+                self.explorado[v][i] = True
+                self.descoberto[v][i] = True
+                self.buscaProfundidade(i)
+
+    # Slide 57
+    def buscaLargura(self, v: int):
+        self.rotular()
+        fila = Fila()
+        self.visitado[v] = True
+        fila.add(v)
+        while(fila.length() > 0):
+            v = fila.remove()
+            for i in self.V:
+                if(self.visitado):
+                    if(not self.explorado[v][i]):
+                        self.explorado[v][i] = True
+                else:
+                    self.explorado[v][i] = True
+                    self.descoberto[v][i] = True
+                    self.visitado[i] = True
+                    fila.add(i)
+
+    # Slide 62
+    def determinarDistancias(self, v: int):
+        self.rotular()
+        fila = Fila()
+        fila.add(v)
+        fila.add(1)
+        while(fila.length() > 0):
+            v = fila.remove()
+            niv = fila.remove()
+            for w in self.V:
+                if(self.visitado[w] and not self.explorado[v][w]):
+                    self.explorado[v][w] = True
+                else:
+                    self.explorado[v][w] = True
+                    self.descoberto[v][w] = True
+                    self.visitado[w] = True
+                    fila.add(w)
+                    fila.add(niv + 1)
