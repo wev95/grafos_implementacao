@@ -6,10 +6,15 @@ class GrafoMatrizAdj(Grafo):
 
     def definirN(self, n: int):
         super(GrafoMatrizAdj, self).definirN(n)
-        self.M = self.createMatrizAdj()
-        self.explorado = []
-        self.visitado = []
-        self.descoberto = []
+        self.M: int = self.createMatrizAdj()
+        self.Peso: list = self.createMatrizAdj()
+        self.explorado: list = []
+        self.visitado: list = []
+        self.descoberto: list = []
+
+    def AddPeso(self, v1: int, v2: int, peso: int):
+        self.Peso[v1][v2] = peso
+        self.Peso[v2][v1] = peso
 
     def addVertice(self, v1: int):
         self.V.append(v1)
@@ -39,7 +44,7 @@ class GrafoMatrizAdj(Grafo):
         self.M[v2][v1] = 0
         self.m -= 1
 
-    def is_adj(self, v1, v2) -> bool:
+    def is_adj(self, v1: int, v2: int) -> bool:
         return self.M[v1][v2] == 1
 
     def getListVerticesAdj(self, v1: int) -> list:
@@ -69,14 +74,8 @@ class GrafoMatrizAdj(Grafo):
     
     # Slide 5
     def busca(self):
-        
-        start= time.time()
         self.rotular()     
         self.buscaSlide5(1)
-        print(start)
-        end=time.time()
-        print(end)
-        # total=total + (end-start)
 
     def buscaSlide5(self, r: int):
         self.visitado[r] = True
