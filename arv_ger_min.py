@@ -37,3 +37,20 @@ def argMin(cT: list) -> int:
         if(cT[i] != None and cT[i] < aux and cT[i] !=- 1):
             aux = cT[i]
     return cT.index(aux)
+
+
+# matriz adjacente
+grafoM = GrafoMatrizAdj()
+grafoM.definirN(6)
+
+arquivo = open("arquivo.txt", "r")
+for linha in arquivo:
+    aux = linha.split(" ")
+    v1 = int(aux[0])
+    v2 = int(aux[1].split("\\")[0])
+    peso = int(aux[2].split("\\")[0])
+    grafoM.AddPeso(v1, v2, peso)
+    grafoM.addAresta(v1, v2)
+
+print(prim(grafoM).getArestas())
+arquivo.close()
